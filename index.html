@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Noto</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  /* ── 透明感のあるクリーンなベース ── */
+  --bg: #f2f5f7;
+  --card: #ffffff;
+  --text: #1e2530;
+  --text2: #5e6a7a;
+  --text3: #9ba8b5;
+
+  /* ── 彩度を上げた現代的な青緑 ── */
+  --accent: #2d8b72;
+  --accent-d: #1f6b57;
+  --accent-l: #e0f5ef;
+
+  /* ── ウォームアンバー ── */
+  --amber: #c47a2e;
+  --amber-l: #fef6eb;
+
+  /* ── ソフトパープル ── */
+  --purple: #6257a8;
+  --purple-l: #eeedfb;
+
+  /* ── ボーダー・危険 ── */
+  --border: #e2e8ee;
+  --danger: #c04848;
+  --danger-l: #fdeaea;
+
+  /* ── ソフトUI シャドウ（ぼかし広げ） ── */
+  --shadow-sm: 0 2px 12px rgba(30,37,48,.06);
+  --shadow: 0 4px 28px rgba(30,37,48,.09);
+  --shadow-lg: 0 8px 40px rgba(30,37,48,.13);
+
+  /* ── 丸み（大きく） ── */
+  --r: 20px;
+  --r-sm: 14px;
+  --r-xs: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px 11px;
+  position: sticky; top: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 1px 0 var(--border);
+}
+.hdr-left { display: flex; flex-direction: column; gap: 2px; }
+.app-name { font-family: 'Lora', serif; font-size: 23px; color: var(--accent); letter-spacing: .04em; }
+.hdr-date { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.hdr-right { display: flex; align-items: center; gap: 10px; }
+.streak-pill {
+  background: var(--amber-l); color: var(--amber);
+  font-size: 12px; font-weight: 700; padding: 5px 12px;
+  border-radius: 20px; border: 1px solid rgba(196,122,46,.3); box-shadow: var(--shadow-sm);
+}
+.gear-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--border);
+  cursor: pointer; font-size: 17px; display: flex;
+  align-items: center; justify-content: center; transition: all .15s;
+}
+.gear-btn:hover { background: var(--accent-l); border-color: var(--accent); }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 57px; z-index: 99;
+}
+.tab {
+  flex: 1; padding: 12px 4px; text-align: center;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  cursor: pointer; border-bottom: 2.5px solid transparent;
+  transition: all .2s; letter-spacing: .01em;
+}
+.tab.on { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── CONTENT ── */
+.content { padding: 18px 16px; max-width: 480px; margin: 0 auto; }
+.sec { display: none; }
+.sec.on { display: block; }
+
+/* ── CARD ── */
+.card {
+  background: var(--card); border-radius: var(--r);
+  padding: 22px 20px 24px; margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  animation: fadeUp .28s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card-title {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.ci {
+  width: 32px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.ci-g { background: var(--accent-l); }
+.ci-a { background: var(--amber-l); }
+.ci-p { background: var(--purple-l); }
+.ci-d { background: var(--danger-l); }
+
+/* ── MOOD ── */
+.mood-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.mood-btn {
+  flex: 1; aspect-ratio: 1; border-radius: var(--r-sm);
+  border: 2px solid var(--border); background: var(--bg);
+  font-size: 22px; cursor: pointer; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; transition: all .15s;
+}
+.mood-btn .ml { font-size: 9px; color: var(--text2); font-weight: 500; }
+.mood-btn.on {
+  border-color: var(--accent); background: var(--accent-l);
+  transform: scale(1.06);
+}
+
+/* ── SLIDER ── */
+.sl-val { text-align: center; font-size: 32px; font-weight: 700; color: var(--accent); }
+.sl-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-top: 4px; }
+input[type=range] { width: 100%; accent-color: var(--accent); height: 6px; margin: 6px 0; }
+
+/* ── LABEL / INPUT ── */
+.lbl { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 5px; display: block; letter-spacing: .02em; }
+textarea, input[type=text], input[type=password] {
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  padding: 11px 14px; font-family: inherit; font-size: 15px;
+  color: var(--text); background: var(--bg); resize: none;
+  transition: border-color .15s; margin-bottom: 12px; line-height: 1.5; border-radius: var(--r-sm);
+}
+textarea:focus, input:focus { outline: none; border-color: var(--accent); background: #fff; }
+textarea { min-height: 72px; }
+
+/* ── BUTTONS ── */
+.btn {
+  width: 100%; padding: 13px; border-radius: var(--r-sm); border: none;
+  font-family: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .15s; letter-spacing: .01em; border-radius: var(--r-sm);
+}
+.btn-p { background: var(--accent); color: #fff; }
+.btn-p:hover { background: var(--accent-d); transform: translateY(-1px); }
+.btn-p:active { transform: translateY(0); }
+.btn-s { background: var(--bg); color: var(--accent); border: 1.5px solid var(--accent); margin-top: 8px; }
+.btn-ghost { background: transparent; color: var(--text2); font-size: 13px; font-weight: 500; padding: 10px; margin-top: 4px; }
+.btn-sm { width: auto; padding: 8px 14px; font-size: 13px; border-radius: 8px; }
+.btn-danger { background: var(--bg); color: var(--danger); border: 1.5px solid var(--danger); margin-top: 8px; font-size: 13px; }
+
+/* ── CHAT ── */
+.chat-box {
+  background: #f8fafb; border-radius: var(--r-sm); padding: 12px;
+  margin-bottom: 10px; max-height: 260px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 8px;
+  scrollbar-width: thin;
+}
+.bub { padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 1.65; max-width: 90%; }
+.bub-ai { background: #fff; border: 1px solid var(--border); color: var(--text); border-radius: 4px 18px 18px 18px; align-self: flex-start; box-shadow: var(--shadow-sm); }
+.bub-user { background: var(--accent); color: #fff; border-radius: 18px 4px 18px 18px; align-self: flex-end; }
+.bub-think { color: var(--text2); font-style: italic; font-size: 13px; align-self: flex-start; }
+.chat-in { display: flex; gap: 7px; align-items: flex-end; }
+.chat-in textarea { margin-bottom: 0; min-height: 42px; max-height: 90px; flex: 1; font-size: 14px; }
+.send-btn {
+  width: 42px; height: 42px; border-radius: 50%; border: none;
+  background: var(--accent); color: #fff; font-size: 16px;
+  cursor: pointer; flex-shrink: 0; transition: all .15s;
+}
+.send-btn:hover { background: var(--accent-d); }
+.skip-lnk { font-size: 12px; color: var(--text2); text-decoration: underline; cursor: pointer; margin-top: 6px; display: inline-block; }
+
+/* ── STEP NAV ── */
+.step-nav { display: flex; align-items: center; gap: 0; margin-bottom: 18px; }
+.s-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--border); background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--text2);
+  cursor: pointer; flex-shrink: 0; transition: all .2s;
+  position: relative; z-index: 1;
+}
+.s-dot.on { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 0 4px var(--accent-l); }
+.s-dot.done { background: var(--accent-l); border-color: var(--accent); color: var(--accent); }
+.s-line { flex: 1; height: 2px; background: var(--border); transition: background .3s; }
+.s-line.done { background: var(--accent); }
+.s-time { font-size: 11px; color: var(--text2); margin-left: 10px; flex-shrink: 0; }
+
+/* ── MODE SELECT ── */
+.mode-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.mode-btn {
+  flex: 1; padding: 12px 8px; border-radius: var(--r-sm);
+  border: 2px solid var(--border); background: var(--bg);
+  text-align: center; cursor: pointer; transition: all .15s;
+}
+.mode-btn.on { border-color: var(--accent); background: var(--accent-l); }
+.mode-label { font-size: 12px; font-weight: 700; color: var(--text); }
+.mode-sub { font-size: 10px; color: var(--text2); margin-top: 2px; }
+.mode-btn.on .mode-label { color: var(--accent); }
+
+/* ── DISTORTIONS ── */
+.dist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 12px; }
+.dist-item {
+  border: 1.5px solid var(--border); border-radius: var(--r-xs);
+  padding: 10px 11px; cursor: pointer; background: var(--bg); transition: all .15s;
+}
+.dist-item.on { border-color: var(--purple); background: var(--purple-l); }
+.dist-item input { display: none; }
+.d-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.d-desc { font-size: 10px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+.dist-item.on .d-name { color: var(--purple); }
+
+/* ── EMOTION GRID ── */
+.emo-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
+.emo-btn {
+  border: 1.5px solid var(--border); border-radius: var(--r-xs);
+  padding: 10px 4px; cursor: pointer; background: var(--bg);
+  text-align: center; font-size: 20px; transition: all .15s;
+}
+.emo-btn .el { display: block; font-size: 11px; color: var(--text2); margin-top: 2px; }
+.emo-btn.on { border-color: var(--amber); background: var(--amber-l); }
+
+/* ── SAFETY LIST ── */
+.safety-cat { font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: .06em; text-transform: uppercase; margin: 12px 0 6px; }
+.list-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+}
+.list-item:last-child { border-bottom: none; }
+.chk {
+  width: 22px; height: 22px; border: 2px solid var(--border);
+  border-radius: 6px; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; transition: all .15s;
+}
+.chk.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── ADD ROW ── */
+.add-row { display: flex; gap: 7px; margin-top: 10px; align-items: center; }
+.add-row input { margin-bottom: 0; flex: 1; min-height: 40px; font-size: 14px; }
+.add-row button { flex-shrink: 0; }
+
+/* ── GRAPH ── */
+.graph-wrap { display: flex; align-items: flex-end; gap: 5px; height: 64px; margin: 8px 0; }
+.g-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
+.g-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 3px; transition: height .5s ease; }
+.g-lbl { font-size: 9px; color: var(--text2); }
+
+/* ── RECORD ITEM ── */
+.rec-item {
+  background: var(--card); border-radius: var(--r-sm);
+  padding: 13px 15px; margin-bottom: 9px;
+  box-shadow: var(--shadow-sm); cursor: pointer; transition: all .15s;
+}
+.rec-item:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.rec-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 5px; }
+.rec-sit { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+.tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; }
+.tag-p { background: var(--purple-l); color: var(--purple); }
+.tag-a { background: var(--amber-l); color: var(--amber); }
+
+/* ── INFO / WARN BOX ── */
+.info-box { background: var(--accent-l); border-radius: var(--r-sm); padding: 12px 14px; font-size: 13px; color: var(--accent); line-height: 1.7; margin-bottom: 12px; border-left: 3px solid var(--accent); }
+.warn-box { background: var(--danger-l); border: 1px solid rgba(192,72,72,.2); border-radius: var(--r-sm); padding: 12px 14px; font-size: 13px; color: var(--danger); line-height: 1.7; margin-bottom: 12px; border-left: 3px solid var(--danger); }
+
+/* ── SUCCESS ANIM ── */
+.success-card {
+  background: linear-gradient(135deg, var(--accent) 0%, #3aad8d 100%);
+  color: #fff; border-radius: var(--r); padding: 24px;
+  box-shadow: var(--shadow-lg);
+  text-align: center; margin-bottom: 14px; display: none;
+  animation: fadeUp .3s ease;
+}
+.success-card.on { display: block; }
+.success-card .big { font-size: 38px; margin-bottom: 8px; animation: pop .4s ease; }
+@keyframes pop { 0%{transform:scale(.5)} 70%{transform:scale(1.15)} 100%{transform:scale(1)} }
+.success-card h3 { font-size: 17px; margin-bottom: 4px; }
+.success-card p { font-size: 13px; opacity: .9; }
+
+/* ── STAT ROW ── */
+.stat-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.stat-row:last-child { border-bottom: none; }
+.stat-val { font-size: 21px; font-weight: 700; color: var(--accent); }
+
+/* ── DIVIDER ── */
+.div { height: 1px; background: var(--border); margin: 14px 0; }
+
+/* ── EMPTY ── */
+.empty { text-align: center; padding: 32px 16px; color: var(--text2); font-size: 14px; line-height: 1.9; }
+
+/* ── BREATHING ── */
+.breath-circle {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: var(--accent-l); border: 3px solid var(--accent);
+  margin: 16px auto; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--accent);
+  transition: transform 4s ease-in-out, background .5s;
+}
+.breath-circle.inhale { transform: scale(1.5); background: var(--accent-l); }
+.breath-circle.hold { transform: scale(1.5); background: #c8e6df; }
+.breath-circle.exhale { transform: scale(1); background: var(--accent-l); }
+
+/* ── SETTINGS MODAL ── */
+.modal-ov {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5);
+  z-index: 500; display: none; align-items: flex-end; justify-content: center;
+}
+.modal-ov.on { display: flex; }
+.modal-sheet {
+  background: var(--card); border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto;
+  padding: 20px 18px 48px;
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.modal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.modal-title { font-family: 'Lora', serif; font-size: 18px; color: var(--accent); }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text2); padding: 4px; }
+
+/* アコーディオン */
+.acc-item { border: 1px solid var(--border); border-radius: var(--r-sm); margin-bottom: 8px; overflow: hidden; }
+.acc-hdr { padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 14px; font-weight: 500; background: var(--bg); transition: background .15s; }
+.acc-hdr:hover { background: var(--accent-l); }
+.acc-arr { font-size: 12px; color: var(--text2); transition: transform .2s; }
+.acc-body { display: none; padding: 14px 15px; background: var(--card); }
+.acc-body.on { display: block; }
+.acc-item.open .acc-arr { transform: rotate(180deg); }
+
+/* ── ONBOARDING ── */
+.ob-ov { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 600; display: none; align-items: flex-end; justify-content: center; }
+.ob-ov.on { display: flex; }
+.ob-sheet { background: var(--card); border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; padding: 26px 22px 48px; animation: slideUp .35s ease; }
+.ob-prog { display: flex; gap: 6px; margin-bottom: 22px; }
+.ob-dot { flex: 1; height: 4px; border-radius: 2px; background: var(--border); transition: background .3s; }
+.ob-dot.on { background: var(--accent); }
+.ob-h { font-family: 'Lora', serif; font-size: 21px; color: var(--accent); margin-bottom: 10px; }
+.ob-p { font-size: 14px; color: var(--text2); line-height: 1.85; margin-bottom: 20px; }
+.ob-scale { display: flex; gap: 6px; margin-bottom: 14px; }
+.ob-sc-btn { flex: 1; padding: 8px 2px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 11px; background: var(--bg); cursor: pointer; text-align: center; transition: all .15s; }
+.ob-sc-btn.on { border-color: var(--accent); background: var(--accent-l); color: var(--accent); font-weight: 700; }
+
+/* ── FAB ── */
+.fab {
+  position: fixed; bottom: 24px; right: 20px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--accent); color: #fff; border: none;
+  font-size: 20px; cursor: pointer;
+  box-shadow: 0 6px 24px rgba(45,139,114,.45);
+  z-index: 200; transition: all .2s;
+}
+.fab:hover { transform: scale(1.1) translateY(-2px); box-shadow: 0 10px 32px rgba(45,139,114,.55); }
+.fab:active { transform: scale(.97); }
+
+/* ── EXPOSURE CARD ── */
+.exp-highlight {
+  background: linear-gradient(135deg, var(--amber-l), #fffcf8);
+  border: 1.5px solid rgba(196,122,46,.3); border-radius: var(--r);
+  box-shadow: var(--shadow);
+  padding: 16px 18px; margin-bottom: 14px;
+}
+.exp-lv { font-size: 10px; font-weight: 700; color: var(--amber); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+.exp-text { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.exp-done-btn { background: var(--amber); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s; }
+.exp-done-btn:hover { background: #9a6028; }
+
+/* ── AI REPORT ── */
+.report-txt { font-size: 14px; line-height: 1.85; color: var(--text); background: var(--bg); border-radius: var(--r-sm); padding: 14px; margin-top: 12px; display: none; }
+
+/* ── POS LIST ── */
+.pos-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; gap: 8px; }
+.pos-item:last-child { border-bottom: none; }
+.pos-date { font-size: 11px; color: var(--text2); flex-shrink: 0; }
+.pos-del { color: var(--text3); cursor: pointer; font-size: 17px; flex-shrink: 0; transition: color .15s; }
+.pos-del:hover { color: var(--danger); }
+
+/* ── EXPAND SECTION ── */
+.expand-sec { display: none; }
+.expand-sec.on { display: block; animation: fadeUp .3s ease; }
+
+/* ── QUICK REPLY ── */
+.quick-reply { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+.qr-btn {
+  padding:7px 14px; border-radius:20px; border:1.5px solid var(--accent);
+  background:var(--accent-l); color:var(--accent); font-size:12px; font-weight:600;
+  cursor:pointer; transition:all .15s; font-family:inherit; box-shadow: var(--shadow-sm);
+}
+.qr-btn:hover { background:var(--accent); color:#fff; }
+
+/* ── COPING CARD ── */
+.coping-card {
+  background: linear-gradient(135deg, #f0f7f5, #fff);
+  border: 1.5px solid var(--accent); border-radius: var(--r);
+  padding: 16px 18px; margin-bottom: 10px;
+}
+.coping-alt { font-size:16px; font-weight:700; color:var(--accent); line-height:1.6; margin-bottom:8px; }
+.coping-meta { font-size:11px; color:var(--text2); }
+</style>
+</head>
+<body>
+
+<!-- ── ONBOARDING ── -->
+<div class="ob-ov on" id="obOv">
+  <div class="ob-sheet">
+    <div class="ob-prog" id="obProg"></div>
+    <div id="obBody"></div>
+  </div>
+</div>
+
+<!-- ── SETTINGS MODAL ── -->
+<div class="modal-ov" id="settModal" onclick="closeSett(event)">
+  <div class="modal-sheet">
+    <div class="modal-hdr">
+      <div class="modal-title">設定</div>
+      <button class="modal-close" onclick="closeSettBtn()">✕</button>
+    </div>
+
+    <div class="acc-item" id="acc0">
+      <div class="acc-hdr" onclick="toggleAcc(0)">
+        🔑 Claude APIキー<span class="acc-arr">▼</span>
+      </div>
+      <div class="acc-body" id="accB0">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.7">console.anthropic.com でAPIキーを取得してください。</p>
+        <span class="lbl">APIキー</span>
+        <input type="password" id="apiKey" placeholder="sk-ant-api03-...">
+        <div class="info-box" style="font-size:12px">キーはこのブラウザのみに保存されます。外部には送信されません。</div>
+        <button class="btn btn-p" onclick="saveApiKey()">保存する</button>
+        <div id="apiSt" style="font-size:12px;color:var(--accent);margin-top:8px;display:none">✓ 設定済み</div>
+      </div>
+    </div>
+
+    <div class="acc-item" id="acc1">
+      <div class="acc-hdr" onclick="toggleAcc(1)">
+        📊 Googleスプレッドシート連携<span class="acc-arr">▼</span>
+      </div>
+      <div class="acc-body" id="accB1">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.7">記録をスプレッドシートに自動保存できます。</p>
+        <span class="lbl">WebアプリURL</span>
+        <input type="text" id="sheetUrl" placeholder="https://script.google.com/macros/s/...">
+        <div class="info-box" style="font-size:12px">
+          設定手順：<br>
+          1. スプレッドシートを新規作成<br>
+          2. 拡張機能 → Apps Script → コードを貼り付け<br>
+          3. デプロイ → ウェブアプリ → アクセス：全員<br>
+          4. URLをコピーして上に貼り付け
+        </div>
+        <button class="btn btn-s btn-sm" onclick="copyGAS()" style="margin-bottom:8px">📋 Apps Scriptコードをコピー</button>
+        <button class="btn btn-p" onclick="saveSheet()">URLを保存する</button>
+        <div id="sheetSt" style="font-size:12px;color:var(--accent);margin-top:8px;display:none">✓ 設定済み</div>
+      </div>
+    </div>
+
+    <div class="acc-item" id="acc2">
+      <div class="acc-hdr" onclick="toggleAcc(2)">
+        ⚠️ 安全のご注意<span class="acc-arr">▼</span>
+      </div>
+      <div class="acc-body" id="accB2">
+        <div class="warn-box">このアプリは専門的治療の代替ではありません。症状が重い場合や、強いつらさが続く場合は専門家にご相談ください。</div>
+        <p style="font-size:13px;color:var(--text2);line-height:2">
+          📞 よりそいホットライン：0120-279-338（24時間）<br>
+          📞 こころの健康相談統一ダイヤル：0570-064-556
+        </p>
+      </div>
+    </div>
+
+    <button class="btn btn-danger" onclick="if(confirm('すべてのデータを削除しますか？'))clearAll()" style="margin-top:12px">🗑 すべてのデータを削除</button>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="app-name">Noto</div>
+    <div class="hdr-date" id="hdrDate"></div>
+  </div>
+  <div class="hdr-right">
+    <div class="streak-pill" id="streakPill">🔥 0日連続</div>
+    <button class="gear-btn" onclick="openSett()">⚙️</button>
+  </div>
+</div>
+
+<!-- ── TABS ── -->
+<div class="tabs">
+  <div class="tab on" onclick="goTab('home')">🏠 ホーム</div>
+  <div class="tab" onclick="goTab('record')">📝 思考記録</div>
+  <div class="tab" onclick="goTab('review')">📊 振り返り</div>
+</div>
+
+<div class="content">
+
+<!-- ════════════════════════════════
+     HOME
+════════════════════════════════ -->
+<div class="sec on" id="tab-home">
+
+  <!-- チェックイン完了 -->
+  <div class="success-card" id="ciDone">
+    <div class="big">✨</div>
+    <h3>チェックイン完了！</h3>
+    <p id="ciDoneMsg">今日も記録できました。</p>
+  </div>
+
+  <!-- チェックインカード -->
+  <div class="card" id="ciCard">
+    <div class="card-title"><div class="ci ci-g">🌤</div>今日の気分チェックイン</div>
+    <span class="lbl">今の気分は？</span>
+    <div class="mood-row">
+      <button class="mood-btn" onclick="pickMood(this,1)">😔<span class="ml">とても辛い</span></button>
+      <button class="mood-btn" onclick="pickMood(this,2)">😟<span class="ml">辛い</span></button>
+      <button class="mood-btn" onclick="pickMood(this,3)">😐<span class="ml">普通</span></button>
+      <button class="mood-btn" onclick="pickMood(this,4)">🙂<span class="ml">良い</span></button>
+      <button class="mood-btn" onclick="pickMood(this,5)">😊<span class="ml">とても良い</span></button>
+    </div>
+    <span class="lbl">対人不安レベル（0〜10）</span>
+    <div class="sl-val" id="anxVal">5</div>
+    <input type="range" min="0" max="10" value="5" id="anxSl" oninput="document.getElementById('anxVal').textContent=this.value">
+    <div class="sl-row"><span>穏やか</span><span>強い不安</span></div>
+    <div style="height:12px"></div>
+    <span class="lbl">一言メモ（任意）</span>
+    <textarea id="ciMemo" placeholder="今日気になっていること、状況など…" rows="2"></textarea>
+    <button class="btn btn-p" onclick="saveCI()">チェックインする</button>
+  </div>
+
+  <!-- チェックイン後に展開 -->
+  <div class="expand-sec" id="homeExpand">
+
+    <!-- 今日のAIチャレンジ -->
+    <div class="card">
+      <div class="card-title"><div class="ci ci-a">🎯</div>今日のチャレンジ</div>
+      <div id="todayChallenge" style="font-size:14px;line-height:1.8;color:var(--text2)">AIが考え中...</div>
+    </div>
+
+    <!-- 曝露チャレンジ（今週の1件） -->
+    <div id="expHighlight"></div>
+
+    <!-- 安全行動チェック（アコーディオン） -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="acc-hdr" onclick="toggleHomeAcc('safetyBody')" style="padding:14px 18px;background:var(--card);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;gap:8px"><div class="ci ci-p" style="flex-shrink:0">👁</div><span style="font-size:13px;font-weight:700">今日の安全行動チェック</span></div>
+        <span class="acc-arr" id="safetyArr">▼</span>
+      </div>
+      <div id="safetyBody" style="display:none;padding:0 18px 16px">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:4px">やってしまっても責めなくてOK。気づくことが第一歩です</p>
+        <div class="safety-cat">視線・回避</div>
+        <div id="safetyA"></div>
+        <div class="safety-cat">自己抑制・同調</div>
+        <div id="safetyB"></div>
+        <div class="safety-cat">過剰な準備・反すう</div>
+        <div id="safetyC"></div>
+        <div class="add-row">
+          <input type="text" id="safetyIn" placeholder="独自の安全行動を追加…">
+          <button class="btn btn-p btn-sm" onclick="addSafety()">追加</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- リラクゼーション（アコーディオン） -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="acc-hdr" onclick="toggleHomeAcc('breathBody')" style="padding:14px 18px;background:var(--card);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;gap:8px"><div class="ci ci-g" style="flex-shrink:0">🌬</div><span style="font-size:13px;font-weight:700">腹式呼吸ガイド</span></div>
+        <span class="acc-arr" id="breathArr">▼</span>
+      </div>
+      <div id="breathBody" style="display:none;padding:0 18px 16px">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px">不安を感じたときに。4秒吸って・4秒止めて・4秒吐く</p>
+        <div class="breath-circle" id="breathCircle">スタート</div>
+        <div style="text-align:center;margin-top:8px">
+          <button class="btn btn-p btn-sm" onclick="startBreath()" id="breathBtn" style="width:auto">開始</button>
+        </div>
+        <div id="breathCount" style="text-align:center;font-size:12px;color:var(--text2);margin-top:8px"></div>
+      </div>
+    </div>
+
+    <!-- 今週グラフ（アコーディオン） -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="acc-hdr" onclick="toggleHomeAcc('graphBody')" style="padding:14px 18px;background:var(--card);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;gap:8px"><div class="ci ci-g" style="flex-shrink:0">📈</div><span style="font-size:13px;font-weight:700">今週の推移グラフ</span></div>
+        <span class="acc-arr" id="graphArr">▼</span>
+      </div>
+      <div id="graphBody" style="display:none;padding:0 18px 16px">
+        <p style="font-size:11px;color:var(--text2);margin-bottom:4px">気分スコア（1〜5）</p>
+        <div class="graph-wrap" id="moodGraph"></div>
+        <div class="div"></div>
+        <p style="font-size:11px;color:var(--text2);margin-bottom:4px">対人不安レベル（0〜10）</p>
+        <div class="graph-wrap" id="anxGraph"></div>
+      </div>
+    </div>
+
+    <!-- 夜のチェックイン -->
+    <div class="card" id="nightCICard" style="display:none">
+      <div class="card-title"><div class="ci ci-p">🌙</div>夜のチェックイン（任意）</div>
+      <span class="lbl">夕方〜夜の気分は？</span>
+      <div class="mood-row" id="nightMoodRow">
+        <button class="mood-btn" onclick="pickNightMood(this,1)">😔<span class="ml">辛い</span></button>
+        <button class="mood-btn" onclick="pickNightMood(this,2)">😟<span class="ml">まあまあ</span></button>
+        <button class="mood-btn" onclick="pickNightMood(this,3)">😐<span class="ml">普通</span></button>
+        <button class="mood-btn" onclick="pickNightMood(this,4)">🙂<span class="ml">良い</span></button>
+        <button class="mood-btn" onclick="pickNightMood(this,5)">😊<span class="ml">とても良い</span></button>
+      </div>
+      <button class="btn btn-s" onclick="saveNightCI()">夜のチェックインを記録</button>
+    </div>
+  </div>
+
+</div><!-- /home -->
+
+<!-- ════════════════════════════════
+     RECORD（7コラム チャット形式）
+════════════════════════════════ -->
+<div class="sec" id="tab-record">
+
+  <!-- モード選択 -->
+  <div class="card" id="modeCard">
+    <div class="card-title"><div class="ci ci-g">📝</div>思考記録</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">今日の記録の深さを選んでください</p>
+    <div class="mode-row">
+      <div class="mode-btn" onclick="setMode(3,this)">
+        <div class="mode-label">3コラム</div>
+        <div class="mode-sub">約3分・初心者向け</div>
+        <div class="mode-sub" style="margin-top:3px">状況・気分・思考</div>
+      </div>
+      <div class="mode-btn" onclick="setMode(5,this)">
+        <div class="mode-label">5コラム</div>
+        <div class="mode-sub">約6分・慣れてきたら</div>
+        <div class="mode-sub" style="margin-top:3px">＋根拠・反証</div>
+      </div>
+      <div class="mode-btn" onclick="setMode(7,this)">
+        <div class="mode-label">7コラム</div>
+        <div class="mode-sub">約10分・フルバージョン</div>
+        <div class="mode-sub" style="margin-top:3px">＋歪み・代替思考</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 記録フォーム -->
+  <div class="card" id="recForm" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="card-title" style="margin-bottom:0"><div class="ci ci-g">📝</div><span id="modeLabel">思考記録</span></div>
+      <button class="btn-ghost btn btn-sm" onclick="saveForLater()" style="width:auto;margin-top:0;font-size:12px;color:var(--text2)">後で続ける</button>
+    </div>
+
+    <div class="step-nav" id="stepNav">
+      <!-- dotは動的生成 -->
+      <div class="s-time" id="stepTime"></div>
+    </div>
+
+    <!-- S0: 状況 -->
+    <div id="s0">
+      <div class="info-box">💡 <strong>状況</strong>…いつ・どこで・誰と・何があったか。事実だけを、カメラの映像のように書きましょう。</div>
+      <div class="chat-box" id="c0"></div>
+      <div class="quick-reply" id="qr0"></div>
+      <div class="chat-in">
+        <textarea id="i0" placeholder="状況を入力…" rows="2"></textarea>
+        <button class="send-btn" onclick="sendS(0)">↑</button>
+      </div>
+      <span class="skip-lnk" onclick="skipS(0)">スキップ →</span>
+    </div>
+
+    <!-- S1: 気分 -->
+    <div id="s1" style="display:none">
+      <div class="info-box">💡 <strong>気分・感情</strong>…「不安」「恥ずかしさ」のように一語で表せるものです。「〜と思う」は気分ではなく思考です。</div>
+      <span class="lbl">感じた感情（複数可）</span>
+      <div class="emo-grid" id="emoG">
+        <div class="emo-btn" onclick="selEmo(this,'不安')">😰<span class="el">不安</span></div>
+        <div class="emo-btn" onclick="selEmo(this,'恐怖')">😱<span class="el">恐怖</span></div>
+        <div class="emo-btn" onclick="selEmo(this,'恥ずかしさ')">😳<span class="el">恥ずかしさ</span></div>
+        <div class="emo-btn" onclick="selEmo(this,'緊張')">😬<span class="el">緊張</span></div>
+        <div class="emo-btn" onclick="selEmo(this,'落ち込み')">😔<span class="el">落ち込み</span></div>
+        <div class="emo-btn" onclick="selEmo(this,'怒り')">😠<span class="el">怒り</span></div>
+        <div class="emo-btn" onclick="selEmo(this,'後悔')">😞<span class="el">後悔</span></div>
+        <div class="emo-btn" onclick="selEmo(this,'焦り')">😣<span class="el">焦り</span></div>
+      </div>
+      <span class="lbl">気分の強さ（0〜100%）</span>
+      <div class="sl-val" id="eStrVal">50</div>
+      <input type="range" min="0" max="100" value="50" step="10" id="eStrSl" oninput="document.getElementById('eStrVal').textContent=this.value">
+      <div style="height:12px"></div>
+      <button class="btn btn-p" onclick="nextS()">次へ →</button>
+      <button class="btn btn-ghost" onclick="prevS()">← 戻る</button>
+    </div>
+
+    <!-- S2: 自動思考 -->
+    <div id="s2" style="display:none">
+      <div class="info-box">💡 <strong>自動思考</strong>…出来事のとき、瞬間的に頭に浮かんだ考えです。「〜だと思う」「〜かもしれない」という形で書くと客観視しやすくなります。</div>
+      <div class="chat-box" id="c2"></div>
+      <div class="quick-reply" id="qr2"></div>
+      <div class="chat-in">
+        <textarea id="i2" placeholder="頭に浮かんだ考え…" rows="2"></textarea>
+        <button class="send-btn" onclick="sendS(2)">↑</button>
+      </div>
+      <span class="skip-lnk" onclick="skipS(2)">スキップ →</span>
+    </div>
+
+    <!-- S3: 根拠（5・7コラムのみ） -->
+    <div id="s3" style="display:none">
+      <div class="info-box">💡 <strong>根拠</strong>…自動思考を裏付ける「事実」だけです。「〜な気がした」ではなく「実際に〜だった」という形で。</div>
+      <div class="chat-box" id="c3"></div>
+      <div class="quick-reply" id="qr3"></div>
+      <div class="chat-in">
+        <textarea id="i3" placeholder="自動思考を裏付ける事実…" rows="2"></textarea>
+        <button class="send-btn" onclick="sendS(3)">↑</button>
+      </div>
+      <span class="skip-lnk" onclick="skipS(3)">スキップ →</span>
+    </div>
+
+    <!-- S4: 反証（5・7コラムのみ） -->
+    <div id="s4" style="display:none">
+      <div class="info-box">💡 <strong>反証</strong>…自動思考と反対の事実です。「〜ではなかった証拠」「別の可能性」を探しましょう。ここが最も大切なステップです。</div>
+      <div class="chat-box" id="c4"></div>
+      <div class="quick-reply" id="qr4"></div>
+      <div class="chat-in">
+        <textarea id="i4" placeholder="反対の事実・別の可能性…" rows="2"></textarea>
+        <button class="send-btn" onclick="sendS(4)">↑</button>
+      </div>
+      <span class="skip-lnk" onclick="skipS(4)">スキップ →</span>
+    </div>
+
+    <!-- S5: 認知の歪み（7コラムのみ） -->
+    <div id="s5" style="display:none">
+      <div class="info-box">💡 <strong>認知の歪み</strong>…思考パターンのクセです。AIの問いかけを参考に、自分で判断して選んでください（複数可）。</div>
+      <div class="chat-box" id="c5"></div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:8px">↓ 当てはまるものを選択（AIは断定しません）</p>
+      <div class="dist-grid" id="distG">
+        <label class="dist-item"><input type="checkbox" value="全か無か思考"><div class="d-name">全か無か思考</div><div class="d-desc">白か黒か、完璧か失敗かで判断する</div></label>
+        <label class="dist-item"><input type="checkbox" value="過度な一般化"><div class="d-name">過度な一般化</div><div class="d-desc">一度の出来事で「いつも」と決めつける</div></label>
+        <label class="dist-item"><input type="checkbox" value="心のフィルター"><div class="d-name">心のフィルター</div><div class="d-desc">ネガティブな面だけに注目する</div></label>
+        <label class="dist-item"><input type="checkbox" value="読心術"><div class="d-name">読心術</div><div class="d-desc">根拠なく相手の気持ちを決めつける</div></label>
+        <label class="dist-item"><input type="checkbox" value="先読みの誤り"><div class="d-name">先読みの誤り</div><div class="d-desc">最悪の結果を確実と予測する</div></label>
+        <label class="dist-item"><input type="checkbox" value="拡大・縮小"><div class="d-name">拡大・縮小</div><div class="d-desc">失敗を過大に、成功を過小に評価する</div></label>
+        <label class="dist-item"><input type="checkbox" value="感情的理由付け"><div class="d-name">感情的理由付け</div><div class="d-desc">「不安だから危険」と感情を根拠にする</div></label>
+        <label class="dist-item"><input type="checkbox" value="べき思考"><div class="d-name">べき思考</div><div class="d-desc">「〜すべき」と自分を縛る</div></label>
+        <label class="dist-item"><input type="checkbox" value="レッテル貼り"><div class="d-name">レッテル貼り</div><div class="d-desc">「自分はダメな人間だ」と全否定する</div></label>
+        <label class="dist-item"><input type="checkbox" value="自己関連付け"><div class="d-name">自己関連付け</div><div class="d-desc">無関係なことでも自分のせいにする</div></label>
+        <label class="dist-item"><input type="checkbox" value="破局化"><div class="d-name">破局化</div><div class="d-desc">最悪の事態が必ず起きると確信する</div></label>
+        <label class="dist-item"><input type="checkbox" value="マイナス化思考"><div class="d-name">マイナス化思考</div><div class="d-desc">良いことを「たまたま」と打ち消す</div></label>
+      </div>
+      <button class="btn btn-p" onclick="nextS()">次へ →</button>
+      <button class="btn btn-ghost" onclick="prevS()">← 戻る</button>
+    </div>
+
+    <!-- S6: 代替思考（7コラムのみ） -->
+    <div id="s6" style="display:none">
+      <!-- ピン留め：根拠・反証の固定表示 -->
+      <div id="pinBox" style="background:#f0f7f5;border:1.5px solid var(--accent);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;display:none">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.04em;margin-bottom:8px">📌 あなたが見つけた事実</div>
+        <div id="pinFor" style="font-size:13px;color:var(--text2);margin-bottom:6px"></div>
+        <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.04em;margin-bottom:4px">📌 あなたが見つけた反証</div>
+        <div id="pinAgainst" style="font-size:13px;color:var(--text2)"></div>
+      </div>
+      <div class="info-box">💡 <strong>代替思考</strong>…「完璧にポジティブ」にする必要はありません。根拠と反証を踏まえた、現実的でバランスのとれた見方を書きましょう。</div>
+      <div class="chat-box" id="c6"></div>
+      <div class="quick-reply" id="qr6"></div>
+      <div class="chat-in">
+        <textarea id="i6" placeholder="バランスのとれた見方…" rows="2"></textarea>
+        <button class="send-btn" onclick="sendS(6)">↑</button>
+      </div>
+      <span class="skip-lnk" onclick="skipS(6)">スキップ →</span>
+    </div>
+
+    <!-- 最終: 再評価 -->
+    <div id="sF" style="display:none">
+      <span class="lbl">記録後の気分の強さ（0〜100%）</span>
+      <div class="sl-val" id="eAftVal">50</div>
+      <input type="range" min="0" max="100" value="50" step="10" id="eAftSl" oninput="document.getElementById('eAftVal').textContent=this.value">
+      <div style="height:10px"></div>
+      <span class="lbl">振り返りメモ（任意）</span>
+      <textarea id="refInput" placeholder="書いてみて気づいたこと、気持ちの変化など…"></textarea>
+      <button class="btn btn-p" onclick="saveRec()">✓ 記録を保存する</button>
+      <button class="btn btn-ghost" onclick="prevS()">← 戻る</button>
+    </div>
+  </div>
+
+</div><!-- /record -->
+
+<!-- ════════════════════════════════
+     REVIEW
+════════════════════════════════ -->
+<div class="sec" id="tab-review">
+
+  <!-- 週次サマリー -->
+  <div class="card">
+    <div class="card-title"><div class="ci ci-p">📊</div>直近7日間のサマリー</div>
+    <div class="stat-row"><span>チェックイン回数</span><span class="stat-val" id="stCI">0</span></div>
+    <div class="stat-row"><span>思考記録回数</span><span class="stat-val" id="stRec">0</span></div>
+    <div class="stat-row"><span>平均気分スコア</span><span class="stat-val" id="stMood">-</span></div>
+    <div class="stat-row"><span>多かった歪みパターン</span><span class="stat-val" id="stDist" style="font-size:13px">-</span></div>
+    <div class="div"></div>
+    <button class="btn btn-s" onclick="genReport()" id="reportBtn">🤖 AIに直近7日を分析してもらう</button>
+    <div id="reportLoad" style="display:none;font-size:13px;color:var(--text2);padding:10px 0;font-style:italic">分析中...</div>
+    <div class="report-txt" id="reportTxt"></div>
+  </div>
+
+  <!-- うまくいったこと -->
+  <div class="card">
+    <div class="card-title"><div class="ci ci-a">⭐</div>うまくいったこと・小さな成功</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:10px">小さなことでもOK。続けることで「できる自分」が積み上がります</p>
+    <div class="add-row" style="margin-top:0">
+      <input type="text" id="posIn" placeholder="例：初めての人に自分から挨拶できた">
+      <button class="btn btn-p btn-sm" onclick="addPos()">追加</button>
+    </div>
+    <div id="posList"></div>
+  </div>
+
+  <!-- 曝露チャレンジ全リスト -->
+  <div class="card">
+    <div class="card-title"><div class="ci ci-a">🚀</div>曝露チャレンジリスト</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:10px">難易度の低い順に登録。「今週の1件」がホームに表示されます</p>
+    <div id="expList"></div>
+    <div class="add-row">
+      <input type="text" id="expIn" placeholder="例：店員に一言話しかける">
+      <button class="btn btn-p btn-sm" onclick="addExp()">追加</button>
+    </div>
+  </div>
+
+  <!-- 思考記録履歴 -->
+  <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px;padding:0 2px">📋 思考記録の履歴</div>
+  <div id="recList"><div class="empty">まだ記録がありません。<br>「思考記録」タブから始めましょう。</div></div>
+
+</div><!-- /review -->
+
+</div><!-- /content -->
+
+<button class="fab" onclick="goTab('record')">✏️</button>
+
+<script>
+// ─────────────────────────────────────────
+// DB
+// ─────────────────────────────────────────
+const DB = {
+  get: k => JSON.parse(localStorage.getItem(k) || '[]'),
+  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
+  str: k => localStorage.getItem(k) || '',
+  setStr: (k,v) => localStorage.setItem(k, v)
+};
+
+// ─────────────────────────────────────────
+// SAFE SYSTEM PROMPT
+// ─────────────────────────────────────────
+const SYS = `あなたはCBT（認知行動療法）の補助AIです。以下を厳守してください。
+
+【絶対禁止】
+- 認知の歪みを断定しない
+- 代替思考を「正解」として提示しない
+- 感情・思考への評価・判断をしない
+- 診断・原因の特定をしない
+- 長い説明や講義をしない
+
+【必須ルール】
+- ソクラテス式の問いかけのみ（「〜ということはありますか？」「〜という見方もできそうですか？」）
+- 一度に一つの問いかけのみ
+- 返答は80字以内の問いかけ一文のみ
+- 危機キーワード（死にたい・消えたい・自傷・希死）を検出したら即座に：「今とてもつらい状況にいるのですね。一人で抱えずに、よりそいホットライン（0120-279-338、24時間）に電話してみてください。」のみを返す
+
+ユーザーは対人不安が強く、人の顔色をうかがう傾向があります。
+日本語で、あたたかく、簡潔に返答してください。`;
+
+async function ai(msgs, max=200) {
+  const key = DB.str('apiKey');
+  if (!key) return '（設定タブでAPIキーを入力してください）';
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({model:'claude-haiku-4-5-20251001', max_tokens:max, system:SYS, messages:msgs})
+    });
+    const d = await r.json();
+    return d.content?.[0]?.text || 'エラーが発生しました。';
+  } catch { return '（接続エラーです）'; }
+}
+
+// ─────────────────────────────────────────
+// ONBOARDING
+// ─────────────────────────────────────────
+let obStep=0, obAns={};
+const OB_TOTAL=3;
+
+const obPages=[
+  ()=>`<div class="ob-h">Notoへようこそ</div>
+    <div class="ob-p">Notoは<strong>対人不安</strong>に特化した、認知行動療法（CBT）ベースのセルフケアアプリです。<br><br>毎日の気分チェックインと思考記録を続けることで、不安のパターンに気づき、少しずつ変化させていくことを目指します。<br><br>⚠️ このアプリは専門的治療の補助ツールです。症状が重い場合は医師にご相談ください。</div>
+    <button class="btn btn-p" onclick="obNext()">始める →</button>`,
+  ()=>`<div class="ob-h">今の状態を教えてください</div>
+    <div class="ob-p">3つの質問に答えてください。アプリがあなたに合わせた提案をします。</div>
+    ${[['q0','知らない人と話すとき、どのくらい不安を感じますか？'],['q1','人前で何かをするとき（発言・食事など）、どのくらい不安を感じますか？'],['q2','不安を感じる場面をどのくらい避けていますか？']].map(([id,q])=>`
+      <div style="margin-bottom:14px"><p style="font-size:14px;font-weight:500;margin-bottom:6px">${q}</p>
+      <div class="ob-scale">${['ほぼなし','少し','かなり','とても強い'].map((l,i)=>`<div class="ob-sc-btn" onclick="pickOb('${id}',${i},this)">${l}</div>`).join('')}</div>
+      </div>`).join('')}
+    <button class="btn btn-p" onclick="obNext()">次へ →</button>`,
+  ()=>`<div class="ob-h">使い方</div>
+    <div class="ob-p"><strong>🌤 毎朝（30秒）</strong><br>気分と不安レベルをチェックイン。AIが今日のチャレンジを提案します。<br><br><strong>📝 出来事があったとき（3〜10分）</strong><br>「思考記録」タブで記録。3コラムから始めて、慣れたら7コラムへ。AIが一緒に考えます。<br><br><strong>📊 週1回（5分）</strong><br>「振り返り」タブでAIが7日間のパターンを分析します。<br><br>まず今日のチェックインから始めましょう！</div>
+    <button class="btn btn-p" onclick="finishOb()">アプリを始める</button>`
+];
+
+function pickOb(id,val,el){
+  obAns[id]=val;
+  el.closest('.ob-scale').querySelectorAll('.ob-sc-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+function renderOb(){
+  const prog=document.getElementById('obProg');
+  prog.innerHTML=Array.from({length:OB_TOTAL},(_,i)=>`<div class="ob-dot${i<=obStep?' on':''}"></div>`).join('');
+  document.getElementById('obBody').innerHTML=obPages[obStep]();
+}
+function obNext(){ obStep++; renderOb(); }
+function finishOb(){
+  DB.setStr('obDone','1');
+  DB.setStr('initScore', Object.values(obAns).reduce((s,v)=>s+v,0));
+  document.getElementById('obOv').classList.remove('on');
+}
+function startOb(){
+  if(DB.str('obDone')==='1'){ document.getElementById('obOv').classList.remove('on'); return; }
+  document.getElementById('obOv').classList.add('on');
+  renderOb();
+}
+
+// ─────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────
+function goTab(name){
+  const tabs=['home','record','review'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',tabs[i]===name));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+  if(name==='review'){ renderStats(); renderRecList(); renderPos(); renderExpList(); }
+}
+
+// ─────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────
+function openSett(){ document.getElementById('settModal').classList.add('on'); }
+function closeSettBtn(){ document.getElementById('settModal').classList.remove('on'); }
+function closeSett(e){ if(e.target===document.getElementById('settModal')) closeSettBtn(); }
+function toggleAcc(i){
+  const body=document.getElementById('accB'+i);
+  const item=document.getElementById('acc'+i);
+  const isOpen=body.classList.contains('on');
+  document.querySelectorAll('.acc-body').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.acc-item').forEach(a=>a.classList.remove('open'));
+  if(!isOpen){ body.classList.add('on'); item.classList.add('open'); }
+}
+function saveApiKey(){
+  const k=document.getElementById('apiKey').value.trim();
+  if(!k){alert('APIキーを入力してください');return;}
+  DB.setStr('apiKey',k);
+  document.getElementById('apiSt').style.display='block';
+  alert('✓ 保存しました');
+}
+function saveSheet(){
+  const u=document.getElementById('sheetUrl').value.trim();
+  if(!u){alert('URLを入力してください');return;}
+  DB.setStr('sheetUrl',u);
+  document.getElementById('sheetSt').style.display='block';
+  alert('✓ 保存しました');
+}
+function copyGAS(){
+  const c=`function doPost(e){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  const d=JSON.parse(e.postData.contents);
+  if(d.type==='checkin'){
+    const s=ss.getSheetByName('チェックイン')||ss.insertSheet('チェックイン');
+    if(s.getLastRow()===0)s.appendRow(['日時','気分','不安','メモ','タイミング']);
+    s.appendRow([d.data.date,d.data.mood,d.data.anxiety,d.data.memo,d.data.timing||'朝']);
+  }
+  if(d.type==='record'){
+    const s=ss.getSheetByName('思考記録')||ss.insertSheet('思考記録');
+    if(s.getLastRow()===0)s.appendRow(['日時','モード','状況','感情','強度前','思考','根拠','反証','歪み','代替思考','強度後','振り返り']);
+    const r=d.data;
+    s.appendRow([r.date,r.mode,r.situation,( r.emotions||[]).join(','),r.eStr,r.thought,r.evFor,r.evAgainst,(r.dists||[]).join(','),r.alternative,r.eAft,r.reflection]);
+  }
+  return ContentService.createTextOutput('OK');
+}`;
+  navigator.clipboard.writeText(c).then(()=>alert('✓ コードをコピーしました'));
+}
+function clearAll(){
+  ['checkins','records','safeties','exposures','positives'].forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
+
+// ─────────────────────────────────────────
+// CHECK-IN
+// ─────────────────────────────────────────
+let moodVal=0, nightMoodVal=0;
+
+function pickMood(btn,v){
+  document.querySelectorAll('#ciCard .mood-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); moodVal=v;
+}
+function pickNightMood(btn,v){
+  document.querySelectorAll('#nightMoodRow .mood-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); nightMoodVal=v;
+}
+
+async function saveCI(){
+  if(!moodVal){alert('気分を選択してください');return;}
+  const data={date:new Date().toISOString(),mood:moodVal,anxiety:parseInt(document.getElementById('anxSl').value),memo:document.getElementById('ciMemo').value,timing:'朝'};
+  const list=DB.get('checkins'); list.push(data); DB.set('checkins',list);
+  updateStreak();
+  sendSheet('checkin',data);
+  document.getElementById('ciDone').classList.add('on');
+  document.getElementById('ciCard').style.display='none';
+  document.getElementById('homeExpand').classList.add('on');
+  renderGraphs();
+  renderSafety();
+  renderExpHighlight();
+  showNightCI();
+  genChallenge(data);
+}
+
+function showNightCI(){
+  const h=new Date().getHours();
+  if(h>=17) document.getElementById('nightCICard').style.display='block';
+}
+
+function saveNightCI(){
+  if(!nightMoodVal){alert('気分を選択してください');return;}
+  const data={date:new Date().toISOString(),mood:nightMoodVal,anxiety:0,memo:'',timing:'夜'};
+  const list=DB.get('checkins'); list.push(data); DB.set('checkins',list);
+  sendSheet('checkin',data);
+  document.getElementById('nightCICard').style.display='none';
+  alert('✓ 夜のチェックインを記録しました');
+}
+
+async function genChallenge(ci){
+  const el=document.getElementById('todayChallenge');
+  const exps=DB.get('exposures').filter(e=>!e.done).map(e=>e.text).join('、')||'なし';
+  const topDist=getTopDist()||'なし';
+  const prompt=`今日のチェックイン情報：
+- 気分${ci.mood}/5、対人不安${ci.anxiety}/10
+- メモ：「${ci.memo||'なし'}」
+- 最近多い認知の歪み：${topDist}
+- 未達成の曝露チャレンジ：${exps}
+
+対人不安が強い人向けに、今日の状態に合った具体的で実行可能な小さなチャレンジを1つ提案してください。「〜してみませんか？」という提案形式で、2〜3文で書いてください。断定や命令にならないように。`;
+  const r=await ai([{role:'user',content:prompt}],300);
+  el.style.color='var(--text)';
+  el.textContent=r;
+}
+
+// ─────────────────────────────────────────
+// STREAK
+// ─────────────────────────────────────────
+function updateStreak(){
+  const cis=DB.get('checkins');
+  if(!cis.length){document.getElementById('streakPill').textContent='始めよう！';return;}
+  const dates=[...new Set(cis.map(c=>new Date(c.date).toDateString()))].sort();
+  const today=new Date().toDateString();
+  const yst=new Date(Date.now()-86400000).toDateString();
+  let streak=1;
+  if(!dates.includes(today)&&!dates.includes(yst)){streak=0;}
+  else{
+    for(let i=dates.length-1;i>0;i--){
+      if((new Date(dates[i])-new Date(dates[i-1]))/86400000===1)streak++;
+      else break;
+    }
+  }
+  // 罪悪感を与えない表現
+  if(streak===0) document.getElementById('streakPill').textContent='また始めよう';
+  else if(streak===1) document.getElementById('streakPill').textContent='🔥 1日目';
+  else document.getElementById('streakPill').textContent=`🔥 ${streak}日連続`;
+}
+
+// ─────────────────────────────────────────
+// GRAPHS
+// ─────────────────────────────────────────
+function renderGraphs(){
+  const cis=DB.get('checkins');
+  const days=['日','月','火','水','木','金','土'];
+  const mg=document.getElementById('moodGraph'), ag=document.getElementById('anxGraph');
+  mg.innerHTML=''; ag.innerHTML='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(Date.now()-i*86400000), ds=d.toDateString();
+    const day=days[d.getDay()];
+    const found=cis.filter(c=>new Date(c.date).toDateString()===ds&&c.timing==='朝');
+    const mv=found.length?found[found.length-1].mood:0;
+    const av=found.length?found[found.length-1].anxiety:-1;
+    const mh=mv?(mv/5*56):3, ah=av>=0?(av/10*56):3;
+    mg.innerHTML+=`<div class="g-col"><div class="g-bar" style="height:${mh}px;background:var(--accent);opacity:${mv?.8:.2}"></div><div class="g-lbl">${day}</div></div>`;
+    ag.innerHTML+=`<div class="g-col"><div class="g-bar" style="height:${ah}px;background:var(--amber);opacity:${av>=0?.8:.2}"></div><div class="g-lbl">${day}</div></div>`;
+  }
+}
+
+// ─────────────────────────────────────────
+// SAFETY
+// ─────────────────────────────────────────
+const safetyDefault=[
+  {text:'目を合わせなかった',cat:'A',custom:false},
+  {text:'場を避けた・早く立ち去った',cat:'A',custom:false},
+  {text:'人の顔色をうかがった',cat:'B',custom:false},
+  {text:'自分の意見を言わずに合わせた',cat:'B',custom:false},
+  {text:'必要以上に謝った',cat:'B',custom:false},
+  {text:'メッセージを送るのをためらった',cat:'B',custom:false},
+  {text:'発言前に何度もリハーサルした',cat:'C',custom:false},
+  {text:'後から自分の言動を何度も振り返った',cat:'C',custom:false},
+  {text:'スマホや別のことで気をそらした',cat:'C',custom:false},
+];
+
+function initSafety(){if(!DB.get('safeties').length)DB.set('safeties',safetyDefault.map(s=>({...s,done:false})));}
+
+function renderSafety(){
+  const list=DB.get('safeties');
+  ['A','B','C'].forEach(cat=>{
+    const el=document.getElementById('safety'+cat);
+    if(!el)return;
+    el.innerHTML=list.filter(s=>s.cat===cat||(!s.cat&&cat==='C')).map((s,ii)=>{
+      const i=list.findIndex(x=>x===s);
+      return `<div class="list-item">
+        <div class="chk${s.done?' on':''}" onclick="toggleSafety(${i})">${s.done?'✓':''}</div>
+        <span style="font-size:14px${s.done?';color:var(--text2)':''}">${s.text}</span>
+        ${s.custom?`<span style="margin-left:auto;color:var(--text2);cursor:pointer;font-size:17px" onclick="delSafety(${i})">×</span>`:''}
+      </div>`;
+    }).join('');
+  });
+}
+
+function toggleSafety(i){const l=DB.get('safeties');l[i].done=!l[i].done;DB.set('safeties',l);renderSafety();}
+function delSafety(i){const l=DB.get('safeties');l.splice(i,1);DB.set('safeties',l);renderSafety();}
+function addSafety(){
+  const v=document.getElementById('safetyIn').value.trim();
+  if(!v)return;
+  const l=DB.get('safeties');
+  l.push({text:v,cat:'C',custom:true,done:false});
+  DB.set('safeties',l);
+  document.getElementById('safetyIn').value='';
+  renderSafety();
+}
+
+// ─────────────────────────────────────────
+// EXPOSURES
+// ─────────────────────────────────────────
+function renderExpHighlight(){
+  const list=DB.get('exposures');
+  const el=document.getElementById('expHighlight');
+  const next=list.find(e=>!e.done);
+  if(!next||!list.length){el.innerHTML='';return;}
+  const idx=list.indexOf(next);
+  el.innerHTML=`<div class="exp-highlight">
+    <div class="exp-lv">今週のチャレンジ · Lv${idx+1}</div>
+    <div class="exp-text">${next.text}</div>
+    <button class="exp-done-btn" onclick="doneExp(${idx})">✓ 今日チャレンジした！</button>
+  </div>`;
+}
+
+function doneExp(i){
+  const l=DB.get('exposures');
+  // 当日チャレンジ記録（翌日リセットしない、カウント増やす）
+  l[i].count=(l[i].count||0)+1;
+  l[i].lastDone=new Date().toDateString();
+  DB.set('exposures',l);
+  renderExpHighlight();
+  renderExpList();
+  // 小さなフィードバック
+  const el=document.getElementById('expHighlight');
+  const fb=document.createElement('div');
+  fb.style.cssText='text-align:center;padding:12px;font-size:15px;color:var(--accent);font-weight:700;animation:fadeUp .3s ease';
+  fb.textContent='✨ お疲れさまでした！';
+  el.appendChild(fb);
+  setTimeout(()=>fb.remove(),2000);
+}
+
+function renderExpList(){
+  const list=DB.get('exposures');
+  const el=document.getElementById('expList');
+  if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:8px">まだ登録されていません</div>';return;}
+  el.innerHTML=list.map((e,i)=>`
+    <div class="list-item">
+      <div style="font-size:10px;font-weight:700;color:var(--amber);width:28px;flex-shrink:0">Lv${i+1}</div>
+      <span style="font-size:14px;flex:1">${e.text}</span>
+      <span style="font-size:11px;color:var(--text2);margin-right:8px">${e.count||0}回</span>
+      <span style="color:var(--text2);cursor:pointer;font-size:17px" onclick="delExp(${i})">×</span>
+    </div>
+  `).join('');
+}
+
+function addExp(){
+  const v=document.getElementById('expIn').value.trim();
+  if(!v)return;
+  const l=DB.get('exposures');
+  l.push({text:v,count:0,done:false});
+  DB.set('exposures',l);
+  document.getElementById('expIn').value='';
+  renderExpList();
+  renderExpHighlight();
+}
+
+function delExp(i){
+  const l=DB.get('exposures');l.splice(i,1);DB.set('exposures',l);
+  renderExpList();renderExpHighlight();
+}
+
+// ─────────────────────────────────────────
+// BREATHING
+// ─────────────────────────────────────────
+let breathTimer=null, breathRunning=false, breathCycles=0;
+
+function startBreath(){
+  if(breathRunning){
+    clearTimeout(breathTimer); breathRunning=false;
+    document.getElementById('breathBtn').textContent='開始';
+    document.getElementById('breathCircle').className='breath-circle';
+    document.getElementById('breathCircle').textContent='スタート';
+    document.getElementById('breathCount').textContent='';
+    breathCycles=0;
+    return;
+  }
+  breathRunning=true;
+  document.getElementById('breathBtn').textContent='停止';
+  breathStep('inhale');
+}
+
+function breathStep(phase){
+  if(!breathRunning)return;
+  const circle=document.getElementById('breathCircle');
+  const count=document.getElementById('breathCount');
+  if(phase==='inhale'){
+    circle.className='breath-circle inhale';
+    circle.textContent='吸って';
+    breathTimer=setTimeout(()=>breathStep('hold'),4000);
+  }else if(phase==='hold'){
+    circle.className='breath-circle hold';
+    circle.textContent='止めて';
+    breathTimer=setTimeout(()=>breathStep('exhale'),4000);
+  }else{
+    circle.className='breath-circle exhale';
+    circle.textContent='吐いて';
+    breathCycles++;
+    count.textContent=`${breathCycles}サイクル目`;
+    breathTimer=setTimeout(()=>breathStep('inhale'),4000);
+  }
+}
+
+// ─────────────────────────────────────────
+// RECORD (CHAT)
+// ─────────────────────────────────────────
+let recMode=0, curS=0;
+const chatH={0:[],2:[],3:[],4:[],5:[],6:[]};
+const recData={situation:'',thought:'',evFor:'',evAgainst:'',alternative:'',reflection:''};
+let selEmos=[], selDists=[];
+
+// モードに応じたステップ順
+const modeSteps={
+  3:[0,1,2,'F'],
+  5:[0,1,2,3,4,'F'],
+  7:[0,1,2,3,4,5,6,'F']
+};
+const stepLabels={0:'①状況',1:'②気分',2:'③自動思考',3:'④根拠',4:'⑤反証',5:'⑥認知の歪み',6:'⑦代替思考','F':'再評価'};
+const stepTimes={3:{0:'約3分',1:'約2分',2:'約1分','F':'あと少し'},5:{0:'約6分',1:'約4分',2:'約3分',3:'約2分',4:'約1分','F':'あと少し'},7:{0:'約10分',1:'約8分',2:'約6分',3:'約4分',4:'約3分',5:'約2分',6:'約1分','F':'あと少し'}};
+
+function setMode(m, btn){
+  recMode=m;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('modeCard').style.display='none';
+  document.getElementById('recForm').style.display='block';
+  document.getElementById('modeLabel').textContent=`思考記録（${m}コラム）`;
+  // ドット生成
+  const steps=modeSteps[m];
+  const nav=document.getElementById('stepNav');
+  nav.innerHTML='';
+  const visSteps=steps.filter(s=>s!=='F');
+  visSteps.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='s-dot'+(i===0?' on':'');
+    d.textContent=i+1;
+    d.onclick=()=>gotoS(s);
+    nav.appendChild(d);
+    if(i<visSteps.length-1){
+      const line=document.createElement('div');
+      line.className='s-line';
+      line.id='sline'+i;
+      nav.appendChild(line);
+    }
+  });
+  const timeEl=document.createElement('div');
+  timeEl.className='s-time'; timeEl.id='stepTime';
+  nav.appendChild(timeEl);
+  curS=0;
+  gotoS(steps[0]);
+}
+
+function gotoS(stepId){
+  const steps=modeSteps[recMode];
+  const idx=steps.indexOf(stepId);
+  [0,1,2,3,4,5,6,'F'].forEach(id=>{
+    const el=document.getElementById('s'+(id==='F'?'F':id));
+    if(el) el.style.display=(id===stepId)?'block':'none';
+  });
+  document.querySelectorAll('.s-dot').forEach((d,i)=>{
+    d.classList.remove('on','done');
+    if(i===idx)d.classList.add('on');
+    else if(i<idx)d.classList.add('done');
+  });
+  // 連結線の色更新
+  document.querySelectorAll('.s-line').forEach((l,i)=>{
+    l.classList.toggle('done', i<idx);
+  });
+  document.getElementById('stepTime').textContent=stepTimes[recMode]?.[stepId]||'';
+  curS=idx;
+
+  // ステップ6：根拠・反証のピン留め表示
+  if(stepId===6){
+    const pin=document.getElementById('pinBox');
+    const pFor=document.getElementById('pinFor');
+    const pAg=document.getElementById('pinAgainst');
+    if(recData.evFor||recData.evAgainst){
+      pin.style.display='block';
+      pFor.textContent=recData.evFor||'（未入力）';
+      pAg.textContent=recData.evAgainst||'（未入力）';
+    }
+  }
+
+  // クイックリプライボタンを生成
+  const qrMap={
+    0:['😔 うまく思い出せない','🔍 もう少し具体的に','✅ 入力できました'],
+    2:['🤔 思いつかない','💡 ヒントをちょうだい','✅ 入力できました'],
+    3:['🤔 思いつかない','💡 ヒントをちょうだい','✅ 入力できました'],
+    4:['🤷 思い浮かばない','💡 別の視点を教えて','🔍 もう少し掘り下げたい','✅ 入力できました'],
+    5:['🤔 よくわからない','💡 パターンのヒントを','✅ 選択できました'],
+    6:['🤔 うまく言葉にできない','💡 もう一度問いかけて','✅ 入力できました']
+  };
+  const qrEl=document.getElementById('qr'+stepId);
+  if(qrEl&&qrMap[stepId]){
+    qrEl.innerHTML=qrMap[stepId].map(label=>`<button class="qr-btn" onclick="quickReply(${stepId},'${label}')">${label}</button>`).join('');
+  }
+
+  if([0,2,3,4,5,6].includes(stepId)&&!chatH[stepId].length) triggerAI(stepId);
+}
+
+function nextS(){
+  // 未送信テキストがあれば自動送信してから進む
+  const steps=modeSteps[recMode];
+  const curStepId=steps[curS];
+  if([0,2,3,4,5,6].includes(curStepId)){
+    const inp=document.getElementById('i'+curStepId);
+    if(inp&&inp.value.trim()){
+      sendS(curStepId).then(()=>{ if(curS<steps.length-1) gotoS(steps[curS+1]); });
+      return;
+    }
+  }
+  if(curS<steps.length-1) gotoS(steps[curS+1]);
+}
+
+function quickReply(stepId, label){
+  // ✅系は次へ進む、それ以外はAIへ送信
+  if(label.startsWith('✅')){
+    nextS(); return;
+  }
+  const inp=document.getElementById('i'+stepId);
+  if(inp) inp.value=label;
+  sendS(stepId);
+}
+
+function toggleHomeAcc(bodyId){
+  const body=document.getElementById(bodyId);
+  const arrId=bodyId.replace('Body','Arr');
+  const arr=document.getElementById(arrId);
+  const isOpen=body.style.display!=='none';
+  body.style.display=isOpen?'none':'block';
+  if(arr) arr.style.transform=isOpen?'':'rotate(180deg)';
+  // グラフは開いたときに描画
+  if(bodyId==='graphBody'&&!isOpen) renderGraphs();
+}
+function prevS(){
+  const steps=modeSteps[recMode];
+  if(curS>0) gotoS(steps[curS-1]);
+}
+function skipS(id){ nextS(); }
+
+const initPrompts={
+  0:()=>'ユーザーが思考記録を始めようとしています。「どんな場面でつらさを感じましたか？」という軽い一言問いかけをしてください。',
+  2:()=>`状況：「${recData.situation}」\nこの状況でどんな考えが浮かんだか、ユーザーが言語化できるよう、一つだけ問いかけてください。`,
+  3:()=>`自動思考：「${recData.thought}」\nこの思考の根拠となる事実を思い出せるよう、一つだけ問いかけてください。`,
+  4:()=>`自動思考：「${recData.thought}」根拠：「${recData.evFor}」\nこの自動思考と反対の事実をユーザー自身が思い出せるよう、一つだけ問いかけてください。`,
+  5:()=>`自動思考：「${recData.thought}」\nこの思考にどんなパターンがあるか気づけるよう、一つだけ問いかけてください。歪みの名前を断定しないでください。`,
+  6:()=>`状況：「${recData.situation}」思考：「${recData.thought}」反証：「${recData.evAgainst}」\nよりバランスのとれた見方をユーザー自身が言語化できるよう、一つだけ問いかけてください。`
+};
+
+async function triggerAI(id){
+  const box=document.getElementById('c'+id); if(!box)return;
+  addBub(box,'考え中...','think');
+  const prompt=initPrompts[id]?.();
+  if(!prompt)return;
+  chatH[id]=[{role:'user',content:prompt}];
+  const r=await ai(chatH[id]);
+  chatH[id].push({role:'assistant',content:r});
+  box.innerHTML=''; addBub(box,r,'ai');
+}
+
+function addBub(box,text,type){
+  const d=document.createElement('div');
+  d.className=type==='ai'?'bub bub-ai':type==='user'?'bub bub-user':'bub bub-think';
+  d.textContent=text;
+  box.appendChild(d); box.scrollTop=box.scrollHeight;
+  return d;
+}
+
+async function sendS(id){
+  const inp=document.getElementById('i'+id); if(!inp)return;
+  const text=inp.value.trim(); if(!text)return;
+  const box=document.getElementById('c'+id);
+  addBub(box,text,'user'); inp.value='';
+  if(id===0)recData.situation=text;
+  if(id===2)recData.thought=text;
+  if(id===3)recData.evFor=text;
+  if(id===4)recData.evAgainst=text;
+  if(id===6)recData.alternative=text;
+  chatH[id].push({role:'user',content:text});
+  const thinking=addBub(box,'考え中...','think');
+  const follow=`ユーザーが「${text}」と答えました。もう少し深く考えられるよう、または次のステップへ進む準備が整ったかを確認するため、一つだけ問いかけてください。`;
+  chatH[id].push({role:'user',content:follow});
+  const r=await ai(chatH[id]);
+  chatH[id].push({role:'assistant',content:r});
+  thinking.remove(); addBub(box,r,'ai');
+}
+
+function selEmo(btn,v){
+  btn.classList.toggle('on');
+  if(btn.classList.contains('on'))selEmos.push(v);
+  else selEmos=selEmos.filter(e=>e!==v);
+}
+
+function initDist(){
+  document.querySelectorAll('#distG .dist-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      item.classList.toggle('on');
+      const cb=item.querySelector('input'); cb.checked=item.classList.contains('on');
+      const v=cb.value;
+      if(cb.checked)selDists.push(v);
+      else selDists=selDists.filter(d=>d!==v);
+    });
+  });
+}
+
+function saveForLater(){
+  if(confirm('途中まで入力した内容を保存しますか？（記録は残りません）')){
+    document.getElementById('recForm').style.display='none';
+    document.getElementById('modeCard').style.display='block';
+    resetRec();
+  }
+}
+
+async function saveRec(){
+  if(!recData.situation&&!recData.thought){alert('状況か自動思考を入力してください');return;}
+  const data={
+    id:Date.now(), date:new Date().toISOString(), mode:recMode,
+    situation:recData.situation, emotions:selEmos,
+    eStr:parseInt(document.getElementById('eStrSl').value),
+    thought:recData.thought, evFor:recData.evFor, evAgainst:recData.evAgainst,
+    dists:selDists, alternative:recData.alternative,
+    eAft:parseInt(document.getElementById('eAftSl').value),
+    reflection:document.getElementById('refInput').value
+  };
+  const all=DB.get('records'); all.push(data); DB.set('records',all);
+  sendSheet('record',data);
+  resetRec();
+
+  // 完了フィードバック（消えない）
+  document.getElementById('recForm').style.display='none';
+  document.getElementById('modeCard').style.display='block';
+  const fb=document.createElement('div');
+  fb.style.cssText='text-align:center;padding:20px;background:var(--accent-l);border-radius:var(--r);margin-bottom:14px;animation:fadeUp .3s ease';
+  fb.innerHTML='<div style="font-size:32px;margin-bottom:8px;animation:pop .4s ease">✨</div><div style="font-size:16px;font-weight:700;color:var(--accent);margin-bottom:8px">記録しました！</div><div id="aiPraise" style="font-size:14px;color:var(--text2);line-height:1.7">AIがコメント中...</div>';
+  document.getElementById('tab-record').insertBefore(fb, document.getElementById('modeCard'));
+
+  // AIのねぎらいコメント生成
+  const praisePrompt=`ユーザーがCBTの思考記録（${data.mode}コラム）を完了しました。
+自動思考：「${data.thought||'（未入力）'}」
+代替思考：「${data.alternative||'（未入力）'}」
+気分変化：${data.eStr}%→${data.eAft}%
+
+この努力をあたたかくねぎらう一文を書いてください。断定・評価・アドバイスはせず、「今日も向き合えましたね」のような共感的な言葉にしてください。30字以内で。`;
+
+  const praise=await ai([{role:'user',content:praisePrompt}],100);
+  const praiseEl=document.getElementById('aiPraise');
+  if(praiseEl) praiseEl.textContent=praise;
+
+  // ポジティブログに自動追加
+  const posText=`思考記録完了：${praise}`;
+  const posList=DB.get('positives');
+  posList.push({text:posText, date:new Date().toISOString(), auto:true});
+  DB.set('positives',posList);
+}
+
+function resetRec(){
+  Object.keys(recData).forEach(k=>recData[k]='');
+  Object.keys(chatH).forEach(k=>chatH[k]=[]);
+  selEmos=[]; selDists=[];
+  document.querySelectorAll('#distG .dist-item').forEach(i=>{i.classList.remove('on');i.querySelector('input').checked=false;});
+  document.querySelectorAll('.emo-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('eStrSl').value=50; document.getElementById('eStrVal').textContent=50;
+  document.getElementById('eAftSl').value=50; document.getElementById('eAftVal').textContent=50;
+  document.getElementById('refInput').value='';
+  for(let i=0;i<=6;i++){const inp=document.getElementById('i'+i);if(inp)inp.value='';const c=document.getElementById('c'+i);if(c)c.innerHTML='';}
+  recMode=0; curS=0;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('on'));
+}
+
+// ─────────────────────────────────────────
+// REVIEW
+// ─────────────────────────────────────────
+function getTopDist(){
+  const recs=DB.get('records').slice(-10);
+  const cnt={};
+  recs.forEach(r=>(r.dists||[]).forEach(d=>cnt[d]=(cnt[d]||0)+1));
+  return Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+}
+
+function renderStats(){
+  const ago=Date.now()-7*86400000;
+  const cis=DB.get('checkins').filter(c=>new Date(c.date)>ago&&c.timing==='朝');
+  const recs=DB.get('records').filter(r=>new Date(r.date)>ago);
+  document.getElementById('stCI').textContent=cis.length;
+  document.getElementById('stRec').textContent=recs.length;
+  const avg=cis.length?(cis.reduce((s,c)=>s+c.mood,0)/cis.length).toFixed(1):'-';
+  document.getElementById('stMood').textContent=avg;
+  document.getElementById('stDist').textContent=getTopDist()||'-';
+}
+
+function renderRecList(){
+  const recs=DB.get('records').reverse();
+  const el=document.getElementById('recList');
+  if(!recs.length){el.innerHTML='<div class="empty">まだ記録がありません。<br>「思考記録」タブから始めましょう。</div>';return;}
+  el.innerHTML=recs.map(r=>{
+    const hasAlt=r.alternative&&r.alternative.trim();
+    if(hasAlt){
+      // コーピングカード形式：代替思考をメインに
+      return `<div class="coping-card">
+        <div class="coping-alt">"${r.alternative}"</div>
+        <div class="coping-meta" style="margin-bottom:6px;color:var(--text2);font-size:12px">↑ このときのバランスの取れた考え方</div>
+        <div class="div" style="margin:8px 0"></div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">きっかけ：${r.situation||r.thought||'（記録あり）'}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+          <div class="tags">
+            ${(r.dists||[]).map(d=>`<span class="tag tag-p">${d}</span>`).join('')}
+            ${(r.emotions||[]).map(e=>`<span class="tag tag-a">${e}</span>`).join('')}
+          </div>
+          <div class="coping-meta">${new Date(r.date).toLocaleDateString('ja-JP',{month:'short',day:'numeric'})}・気分${r.eStr??'-'}%→${r.eAft??'-'}%</div>
+        </div>
+      </div>`;
+    } else {
+      // 代替思考なし（3コラム等）は通常表示
+      return `<div class="rec-item">
+        <div class="rec-meta">
+          <span>${new Date(r.date).toLocaleDateString('ja-JP',{month:'short',day:'numeric',weekday:'short'})}・${r.mode||3}コラム</span>
+          <span>気分 ${r.eStr??'-'}%→${r.eAft??'-'}%</span>
+        </div>
+        <div class="rec-sit">${r.situation||r.thought||'（記録あり）'}</div>
+        <div class="tags">
+          ${(r.dists||[]).map(d=>`<span class="tag tag-p">${d}</span>`).join('')}
+          ${(r.emotions||[]).map(e=>`<span class="tag tag-a">${e}</span>`).join('')}
+        </div>
+      </div>`;
+    }
+  }).join('');
+}
+
+async function genReport(){
+  const btn=document.getElementById('reportBtn');
+  const load=document.getElementById('reportLoad');
+  const txt=document.getElementById('reportTxt');
+  btn.style.display='none'; load.style.display='block'; txt.style.display='none';
+  const ago=Date.now()-7*86400000;
+  const cis=DB.get('checkins').filter(c=>new Date(c.date)>ago&&c.timing==='朝');
+  const recs=DB.get('records').filter(r=>new Date(r.date)>ago);
+  if(!cis.length&&!recs.length){
+    load.style.display='none'; txt.style.display='block';
+    txt.textContent='直近7日間の記録がありません。チェックインや思考記録を続けると分析できます。';
+    btn.style.display='block'; btn.textContent='🔄 再生成する'; return;
+  }
+  const ciSum=cis.map(c=>`${new Date(c.date).toLocaleDateString('ja-JP',{month:'short',day:'numeric'})}: 気分${c.mood}/5 不安${c.anxiety}/10`).join('\n');
+  const recSum=recs.map(r=>`・思考「${r.thought||''}」歪み:${(r.dists||[]).join('・')} 気分${r.eStr??'-'}%→${r.eAft??'-'}%`).join('\n');
+  const prompt=`以下は直近7日間のCBT記録（ユーザーは対人不安が強く、人の顔色をうかがう傾向があります）。
+【チェックイン】\n${ciSum||'なし'}
+【思考記録】\n${recSum||'なし'}
+以下の形式で振り返りレポートを書いてください（250字以内）：
+1. 今週気づいたパターン（断定せず「〜のような傾向が見られます」という表現で）
+2. 気分が改善した場面があれば具体的に取り上げて肯定する
+3. 来週へのやわらかい問いかけ一文
+重要：診断・断定・評価はしない。あくまで気づきを促す問いかけとして書く。`;
+  const r=await ai([{role:'user',content:prompt}],500);
+  load.style.display='none'; txt.style.display='block'; txt.textContent=r;
+  btn.style.display='block'; btn.textContent='🔄 再生成する';
+}
+
+// うまくいったこと
+function addPos(){
+  const v=document.getElementById('posIn').value.trim(); if(!v)return;
+  const l=DB.get('positives'); l.push({text:v,date:new Date().toISOString()}); DB.set('positives',l);
+  document.getElementById('posIn').value=''; renderPos();
+}
+function renderPos(){
+  const l=DB.get('positives').reverse().slice(0,10);
+  const el=document.getElementById('posList');
+  if(!l.length){el.innerHTML='<div style="font-size:13px;color:var(--text2);padding:10px 0">まだ記録がありません</div>';return;}
+  el.innerHTML=l.map((p,i)=>`<div class="pos-item"><span>${p.text}</span><span class="pos-date">${new Date(p.date).toLocaleDateString('ja-JP',{month:'short',day:'numeric'})}</span><span class="pos-del" onclick="delPos(${i})">×</span></div>`).join('');
+}
+function delPos(i){
+  const l=DB.get('positives').reverse(); l.splice(i,1); DB.set('positives',l.reverse()); renderPos();
+}
+
+// ─────────────────────────────────────────
+// SHEET
+// ─────────────────────────────────────────
+async function sendSheet(type,data){
+  const url=DB.str('sheetUrl'); if(!url)return;
+  try{ await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type,data})}); }catch{}
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+function init(){
+  // 日付
+  document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+
+  // 設定値復元
+  const key=DB.str('apiKey');
+  if(key){document.getElementById('apiKey').value=key;document.getElementById('apiSt').style.display='block';}
+  const url=DB.str('sheetUrl');
+  if(url){document.getElementById('sheetUrl').value=url;document.getElementById('sheetSt').style.display='block';}
+
+  // 今日チェックイン済み確認
+  const today=new Date().toDateString();
+  const cis=DB.get('checkins');
+  const todayCI=cis.find(c=>new Date(c.date).toDateString()===today&&c.timing==='朝');
+  if(todayCI){
+    document.getElementById('ciDone').classList.add('on');
+    document.getElementById('ciDoneMsg').textContent='今日のチェックイン済みです。';
+    document.getElementById('ciCard').style.display='none';
+    document.getElementById('homeExpand').classList.add('on');
+    renderGraphs(); renderSafety(); renderExpHighlight(); showNightCI();
+  }
+
+  updateStreak();
+  initSafety();
+  initDist();
+  startOb();
+}
+
+init();
+</script>
+</body>
+</html>
